@@ -1,0 +1,55 @@
+# Demo metric definitions for Metrics Layer Lite.
+# Each metric: one source table, one measure, optional dimensions, optional filters.
+# The same YAML drives `compile` (show the SQL) and `run` (execute it).
+
+metrics:
+  - name: total_revenue
+    description: Sum of amounts for completed orders.
+    source: orders
+    measure:
+      type: sum
+      column: amount
+    filters:
+      - column: status
+        operator: "="
+        value: completed
+
+  - name: orders_by_region
+    description: Count of completed orders, grouped by region.
+    source: orders
+    measure:
+      type: count
+    dimensions: [region]
+    filters:
+      - column: status
+        operator: "="
+        value: completed
+
+  - name: avg_order_value
+    description: Average amount across all orders (any status).
+    source: orders
+    measure:
+      type: avg
+      column: amount
+
+  - name: active_customers
+    description: Distinct customers with at least one completed order.
+    source: orders
+    measure:
+      type: count_distinct
+      column: customer_id
+    filters:
+      - column: status
+        operator: "="
+        value: completed
+
+  - name: high_value_orders
+    description: Orders over $400, grouped by region.
+    source: orders
+    measure:
+      type: count
+    dimensions: [region]
+    filters:
+      - column: amount
+        operator: ">"
+        value: 400
